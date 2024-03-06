@@ -3,8 +3,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 
-# De user_loader decorator zorgt voor de flask-login voor de huidige gebruiker
-# en haalt zijn/haar id op.
 @login_manager.user_loader
 def load_user(user_id):
     return Gebruiker.query.get(user_id)
