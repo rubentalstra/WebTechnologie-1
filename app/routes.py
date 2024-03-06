@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user
-from .models import Gebruiker
+from .models import Gebruiker, Film
 from .forms import LoginForm, RegistratieForm
 from . import db, bcrypt
 
@@ -8,7 +8,8 @@ app = Blueprint('main', __name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    films = Film.query.all()
+    return render_template('index.html', films=films)
 
 @app.route('/welkom')
 @login_required
@@ -53,3 +54,58 @@ def register():
         flash('Je account is aangemaakt. Je kunt nu inloggen.', 'success')
         return redirect(url_for('main.login'))
     return render_template('register.html', form=form)
+
+
+@app.route('/films', methods=['GET', 'POST'])
+@login_required
+def films():
+    # Logic to display films
+    pass
+
+@app.route('/film/<int:id>')
+def film_detail(id):
+    film = Film.query.get_or_404(id)
+    return render_template('film_detail.html', film=film)
+
+@app.route('/film/add', methods=['GET', 'POST'])
+@login_required
+def add_film():
+    if request.method == 'POST':
+        # Logic to add film
+        return redirect(url_for('index'))
+    return render_template('add_film.html')
+
+@app.route('/film/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_film(id):
+    film = Film.query.get_or_404(id)
+    if request.method == 'POST':
+        # Logic to update film
+        return redirect(url_for('film_detail', id=film.id))
+    return render_template('edit_film.html', film=film)
+
+@app.route('/film/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_film(id):
+    film = Film.query.get_or_404(id)
+    # Logic to delete film
+    return redirect(url_for('index'))
+
+
+@app.route('/regisseurs')
+@login_required
+def regisseurs():
+    # Logic to display directors
+    pass
+
+@app.route('/acteurs')
+@login_required
+def acteurs():
+    # Logic to display actors
+    pass
+
+@app.route('/rollen')
+@login_required
+def rollen():
+    # Logic to display roles
+    pass

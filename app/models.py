@@ -1,5 +1,4 @@
 from app import db, bcrypt, login_manager
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 
@@ -31,7 +30,12 @@ class Film(db.Model):
     titel = db.Column(db.String(100), nullable=False)
     regisseur_id = db.Column(db.Integer, db.ForeignKey('regisseur.id'), nullable=False)
     jaar = db.Column(db.Integer, nullable=False)
-    # Relatie met Regisseur en Rol
+    citaten = db.relationship('Citaat', backref='film', lazy=True)
+
+class Citaat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    inhoud = db.Column(db.Text, nullable=False)
+    film_id = db.Column(db.Integer, db.ForeignKey('film.id'), nullable=False)
 
 class Regisseur(db.Model):
     id = db.Column(db.Integer, primary_key=True)

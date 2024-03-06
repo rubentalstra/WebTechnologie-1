@@ -1,11 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="jumbotron">
-    {% if current_user.is_authenticated %}
-    <p>Hallo {{ current_user.username }}!</p>
-    {% else %}
-    <p>Om te kunnen beginnen: log in of registreer!</p>
-    {% endif %}
+<div class="container mt-4">
+    <h1>Nederlandse Films</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for film in films %}
+        <div class="col">
+            <div class="card h-100">
+                <img src="path/to/movie/poster.jpg" class="card-img-top" alt="{{ film.titel }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ film.titel }}</h5>
+                    <p class="card-text">Regisseur: {{ film.regisseur.voornaam }} {{ film.regisseur.achternaam }}</p>
+                    <p class="card-text">Jaar: {{ film.jaar }}</p>
+                    <a href="{{ url_for('film_detail', id=film.id) }}" class="btn btn-primary">Meer details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
-
 {% endblock %}

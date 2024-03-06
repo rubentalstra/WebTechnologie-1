@@ -1,22 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Inloggen</h2>
-<form action="" method="post">
-    {{ form.hidden_tag() }}
-    <div class="form-group">
-        {{ form.email.label }}
-        {{ form.email(class="form-control") }}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center">Inloggen</h2>
+                    <form action="" method="post" class="mt-4">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.wachtwoord.label(class="form-label") }}
+                            {{ form.wachtwoord(class="form-control") }}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.remember_me(class="form-check-input") }}
+                            {{ form.remember_me.label(class="form-check-label") }}
+                        </div>
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        {{ form.wachtwoord.label }}
-        {{ form.wachtwoord(class="form-control") }}
-    </div>
-    <div class="form-group">
-        {{ form.remember_me(class="form-check-input") }} {{ form.remember_me.label }}
-    </div>
-    <div class="form-group">
-        {{ form.submit(class="btn btn-primary") }}
-    </div>
-</form>
+</div>
 {% endblock %}
