@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError
-from wtforms.validators import InputRequired, Email, Length, EqualTo
+from wtforms import IntegerField, StringField, PasswordField, BooleanField, SubmitField, ValidationError
+from wtforms.validators import InputRequired, DataRequired, Email, Length, EqualTo
 
 from app.models import Gebruiker
 
@@ -26,3 +26,10 @@ class RegistratieForm(FlaskForm):
         # Check of het e-mailadres al in de database voorkomt!
         if Gebruiker.query.filter_by(email=field.data).first():
             raise ValidationError('Dit e-mailadres staat al geregistreerd!')
+        
+
+class FilmForm(FlaskForm):
+    titel = StringField('Titel', validators=[DataRequired()])
+    regisseur_id = IntegerField('Regisseur ID', validators=[DataRequired()])
+    jaar = IntegerField('Jaar', validators=[DataRequired()])
+    submit = SubmitField('Film Toevoegen')

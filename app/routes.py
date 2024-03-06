@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user
 from .models import Gebruiker, Film
-from .forms import LoginForm, RegistratieForm
+from .forms import FilmForm, LoginForm, RegistratieForm
 from . import db, bcrypt
 
 app = Blueprint('main', __name__)
@@ -55,25 +55,23 @@ def register():
         return redirect(url_for('main.login'))
     return render_template('register.html', form=form)
 
-
-@app.route('/films', methods=['GET', 'POST'])
-@login_required
-def films():
-    # Logic to display films
-    pass
-
 @app.route('/film/<int:id>')
 def film_detail(id):
     film = Film.query.get_or_404(id)
     return render_template('film_detail.html', film=film)
 
+
+
 @app.route('/film/add', methods=['GET', 'POST'])
-@login_required
 def add_film():
-    if request.method == 'POST':
-        # Logic to add film
-        return redirect(url_for('index'))
-    return render_template('add_film.html')
+    form = FilmForm()
+    if form.validate_on_submit():
+        film = Film(titel=form.titel.data, regisseur_id=form.regisseur_id.data, jaar=form.jaar.data)
+        db.session.add(film)
+        db.session.commit()
+        flash('De film is succesvol toegevoegd!', 'success')
+        return redirect(url_for('main.index'))
+    return render_template('add_film.html', title='Film Toevoegen', form=form)
 
 @app.route('/film/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
