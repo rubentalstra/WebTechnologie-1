@@ -45,3 +45,8 @@ class RegisseurForm(FlaskForm):
     voornaam = StringField('Voornaam', validators=[DataRequired()])
     achternaam = StringField('Achternaam', validators=[DataRequired()])
     submit = SubmitField('Regisseur Toevoegen')
+
+class ActeurForm(FlaskForm):
+    voornaam = StringField('Voornaam', validators=[DataRequired()])
+    achternaam = StringField('Achternaam', validators=[DataRequired()])
+    submit = SubmitField('Actuer Toevoegen')

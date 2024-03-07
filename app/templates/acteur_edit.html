@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Acteur Bewerken</h2>
+    <form action="" method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.voornaam.label(class="form-label") }}
+            {{ form.voornaam(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.achternaam.label(class="form-label") }}
+            {{ form.achternaam(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Update Acteur</button>
+    </form>
+</div>
+{% endblock %}

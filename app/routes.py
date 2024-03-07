@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user
-from .models import Citaat, Gebruiker, Film, Regisseur
-from .forms import CitaatForm, FilmForm, LoginForm, RegisseurForm, RegistratieForm
+from .models import Acteur, Citaat, Gebruiker, Film, Regisseur
+from .forms import ActeurForm, CitaatForm, FilmForm, LoginForm, RegisseurForm, RegistratieForm
 from . import db, bcrypt
 
 app = Blueprint('main', __name__)
@@ -111,14 +111,34 @@ def add_quote_for_film(film_id):
     return render_template('film_add_quote.html', form=form, film_id=film_id)
 
 
+
 @app.route('/film/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_film(id):
     film = Film.query.get_or_404(id)
-    if request.method == 'POST':
-        # Logic to update film
-        return redirect(url_for('film_detail', id=film.id))
-    return render_template('edit_film.html', film=film)
+    form = FilmForm(obj=film)
+
+    form.regisseur_id.choices = [(0, 'Choose...')] + [(r.id, r.voornaam + ' '  + r.achternaam ) for r in Regisseur.query.all()]
+    
+    if form.validate_on_submit():
+        # if form.regisseur_id.data == 0:
+        #     flash('Please select a valid regisseur.', 'danger')
+        #     return render_template('film_edit.html', form=form, film=film)
+
+        film.titel = form.titel.data
+        film.regisseur_id = form.regisseur_id.data
+        film.jaar = form.jaar.data
+        film.trailer_url = form.trailer_url.data
+        film.bezoekers = form.bezoekers.data
+        film.omzet = form.omzet.data
+        film.overzicht = form.overzicht.data
+        
+        db.session.commit()
+        flash('De film is succesvol bijgewerkt!', 'success')
+        return redirect(url_for('main.film_detail', id=film.id))
+    
+    return render_template('film_edit.html', form=form, film=film)
+
 
 
 @app.route('/film/delete/<int:id>')
@@ -142,7 +162,7 @@ def regisseurs():
 
 @app.route('/regisseur/add', methods=['GET', 'POST'])
 @login_required
-def add_regisseur():
+def regisseur_add():
     form = RegisseurForm()
     if form.validate_on_submit():
         regisseur = Regisseur(voornaam=form.voornaam.data, achternaam=form.achternaam.data)
@@ -153,12 +173,21 @@ def add_regisseur():
     return render_template('regisseur_add.html', form=form)
 
 
-@app.route('/regisseur/edit/<int:id>')
+@app.route('/regisseur/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit_regisseur(id):
-    # Logic to edit an existing regisseur
-    # This can redirect to a form page pre-populated with regisseur data
-    return redirect(url_for('regisseur_form', id=id))
+def regisseur_edit(id):
+    regisseur = Regisseur.query.get_or_404(id)
+    form = RegisseurForm(obj=regisseur)
+    
+    if form.validate_on_submit():
+        regisseur.voornaam = form.voornaam.data
+        regisseur.achternaam = form.achternaam.data
+        
+        db.session.commit()
+        flash('De regisseur is succesvol bijgewerkt!', 'success')
+        return redirect(url_for('main.regisseurs', id=regisseur.id))
+    
+    return render_template('regisseur_edit.html', form=form)
 
 
 @app.route('/regisseur/delete/<int:id>')
@@ -176,10 +205,45 @@ def delete_regisseur(id):
 
 
 
-@app.route('/acteurs')
-@login_required
+@app.route('/acteurs', methods=['GET'])
 def acteurs():
-    # Logic to display actors
+    acteurs = Acteur.query.all()  # Fetch all acteurs
+    return render_template('acteurs.html', acteurs=acteurs)
+
+@app.route('/acteur/add', methods=['GET', 'POST'])
+@login_required
+def acteur_add():
+    form = ActeurForm()
+    if form.validate_on_submit():
+        acteur = Acteur(voornaam=form.voornaam.data, achternaam=form.achternaam.data)
+        db.session.add(acteur)
+        db.session.commit()
+        flash('De acteur is succesvol toegevoegd!', 'success')
+        return redirect(url_for('main.acteurs'))
+    return render_template('acteur_add.html', form=form)
+
+
+@app.route('/acteur/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def acteur_edit(id):
+    acteur = Acteur.query.get_or_404(id)
+    form = ActeurForm(obj=acteur)
+    
+    if form.validate_on_submit():
+        acteur.voornaam = form.voornaam.data
+        acteur.achternaam = form.achternaam.data
+        
+        db.session.commit()
+        flash('De acteur is succesvol bijgewerkt!', 'success')
+        return redirect(url_for('main.acteurs', id=acteur.id))
+    
+    return render_template('acteur_edit.html', form=form)
+
+
+@app.route('/acteur/delete/<int:id>')
+@login_required
+def acteur_delete(id):
+    # Logic to display roles
     pass
 
 @app.route('/rollen')

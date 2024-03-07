@@ -2,7 +2,12 @@
 
 {% block content %}
 <div class="container mt-4">
+
+
+    {% include 'flash_messages_template.html' %}
+
     <div class="d-flex justify-content-between align-items-center mb-4">
+
         <h2>{{ film.titel }}</h2>
         <div>
             <!-- Edit button -->
@@ -51,8 +56,6 @@
     <!-- Add Quote Form -->
     {% if current_user.is_authenticated %}
     <h4>Add a new Citaat</h4>
-
-    {% include 'flash_messages_template.html' %}
 
 
     <form action="" method="POST">

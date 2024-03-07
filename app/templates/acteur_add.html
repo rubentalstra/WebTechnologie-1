@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Acteur Toevoegen</h2>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.voornaam.label(class="form-label") }}
+            {{ form.voornaam(class="form-control") }}
+            {% if form.voornaam.errors %}
+            <div class="invalid-feedback">
+                {{ form.voornaam.errors[0] }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.achternaam.label(class="form-label") }}
+            {{ form.achternaam(class="form-control") }}
+            {% if form.achternaam.errors %}
+            <div class="invalid-feedback">
+                {{ form.achternaam.errors[0] }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

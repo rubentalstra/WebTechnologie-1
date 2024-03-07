@@ -72,10 +72,19 @@ class Acteur(db.Model):
     achternaam = db.Column(db.String(50), nullable=False)
     rollen = db.relationship('Rol', backref='acteur', lazy=True)
 
+    def __init__(self, voornaam, achternaam):
+        self.voornaam = voornaam
+        self.achternaam = achternaam
+
 class Rol(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     acteur_id = db.Column(db.Integer, db.ForeignKey('acteur.id'), nullable=False)
     film_id = db.Column(db.Integer, db.ForeignKey('film.id'), nullable=False)
     personage = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, acteur_id, film_id, personage):
+        self.acteur_id = acteur_id
+        self.film_id = film_id
+        self.personage = personage
 
 # db.create_all()

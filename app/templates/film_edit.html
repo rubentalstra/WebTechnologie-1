@@ -7,22 +7,51 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Film Toevoegen</h2>
-    <form action="" method="POST">
+    <h2>Film Bewerken</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+
+    <form action="{{ url_for('main.edit_film', id=film.id) }}" method="POST">
         {{ form.hidden_tag() }}
         <div class="mb-3 form-group">
-            {{ form.titel.label }}
+            {{ form.titel.label }} <span class="text-danger">*</span>
             {{ form.titel(class="form-control") }}
         </div>
         <div class="mb-3 form-group">
-            {{ form.regisseur_id.label }}
+            {{ form.regisseur_id.label }} <span class="text-danger">*</span>
             {{ form.regisseur_id(class="form-control selectpicker", data_live_search="true") }}
         </div>
         <div class="mb-3 form-group">
-            {{ form.jaar.label }}
+            {{ form.jaar.label }} <span class="text-danger">*</span>
             {{ form.jaar(class="form-control") }}
         </div>
-        <button type="submit" class="btn btn-primary ">Submit</button>
+        <div class="mb-3 form-group">
+            {{ form.trailer_url.label }}
+            {{ form.trailer_url(class="form-control") }}
+        </div>
+        <div class="mb-3 form-group">
+            {{ form.bezoekers.label }}
+            {{ form.bezoekers(class="form-control") }}
+        </div>
+        <div class="mb-3 form-group">
+            {{ form.omzet.label }}
+            {{ form.omzet(class="form-control") }}
+        </div>
+        <div class="mb-3 form-group">
+            {{ form.overzicht.label }}
+            {{ form.overzicht(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
     </form>
 </div>
 {% endblock %}
