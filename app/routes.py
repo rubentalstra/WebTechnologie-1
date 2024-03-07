@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user
-from .models import Acteur, Citaat, Gebruiker, Film, Regisseur
-from .forms import ActeurForm, CitaatForm, FilmForm, LoginForm, RegisseurForm, RegistratieForm
+from .models import Acteur, Citaat, Gebruiker, Film, Regisseur, Rol
+from .forms import ActeurForm, CitaatForm, FilmForm, LoginForm, RegisseurForm, RegistratieForm, RolForm
 from . import db, bcrypt
 
 app = Blueprint('main', __name__)
@@ -246,8 +246,66 @@ def acteur_delete(id):
     # Logic to display roles
     pass
 
-@app.route('/rollen')
-@login_required
+
+
+
+
+
+@app.route('/rollen', methods=['GET'])
 def rollen():
+    # roles = Rol.query \
+    #     .join(Film, Rol.film_id == Film.id) \
+    #     .join(Acteur, Rol.acteur_id == Acteur.id) \
+    #     .add_columns(Rol.id, Rol.personage, Film.titel, Acteur.voornaam, Acteur.achternaam) \
+    #     .all()
+    
+    roles = db.session.query(Rol, Film.titel, Acteur.voornaam, Acteur.achternaam)\
+                  .join(Film, Rol.film_id == Film.id)\
+                  .join(Acteur, Rol.acteur_id == Acteur.id)\
+                  .all()
+
+    return render_template('rollen.html', roles=roles)
+
+@app.route('/rol/add', methods=['GET', 'POST'])
+@login_required
+def rol_add():
+    form = RolForm()
+    form.acteur_id.choices = [(0, 'Choose...')] + [(a.id, a.voornaam + ' ' + a.achternaam) for a in Acteur.query.all()]
+    form.film_id.choices = [(0, 'Choose...')] + [(f.id, f.titel) for f in Film.query.all()]
+
+    if form.validate_on_submit():
+        # Create a new Rol instance with all the form fields
+        rol = Rol(
+            acteur_id=form.acteur_id.data, 
+            film_id=form.film_id.data,
+            personage=form.personage.data
+        )
+        db.session.add(rol)
+        db.session.commit()
+        flash('De Rol is succesvol toegevoegd!', 'success')
+        return redirect(url_for('main.rollen'))
+    
+    return render_template('rol_add.html', form=form)
+
+
+@app.route('/rol/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def rol_edit(id):
+    rol = Rol.query.get_or_404(id)
+    form = RolForm(obj=rol)
+    
+    # if form.validate_on_submit():
+    #     acteur.voornaam = form.voornaam.data
+    #     acteur.achternaam = form.achternaam.data
+        
+    #     db.session.commit()
+    #     flash('De acteur is succesvol bijgewerkt!', 'success')
+    #     return redirect(url_for('main.rollen', id=rol.id))
+    
+    return render_template('rol_edit.html', form=form)
+
+@app.route('/rol/delete/<int:id>')
+@login_required
+def rol_delete(id):
     # Logic to display roles
     pass

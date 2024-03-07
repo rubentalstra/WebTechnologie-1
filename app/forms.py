@@ -50,3 +50,10 @@ class ActeurForm(FlaskForm):
     voornaam = StringField('Voornaam', validators=[DataRequired()])
     achternaam = StringField('Achternaam', validators=[DataRequired()])
     submit = SubmitField('Actuer Toevoegen')
+
+
+class RolForm(FlaskForm):
+    acteur_id = SelectField('Acteur', coerce=int, validators=[DataRequired()])   
+    film_id = SelectField('Film', coerce=int, validators=[DataRequired()])
+    personage = StringField('Personage', validators=[DataRequired()])
+    submit = SubmitField('Rol Toevoegen')

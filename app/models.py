@@ -86,5 +86,3 @@ class Rol(db.Model):
         self.acteur_id = acteur_id
         self.film_id = film_id
         self.personage = personage
-
-# db.create_all()

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Rollen Overzicht</h2>
+        <a href="{{ url_for('main.rol_add') }}" class="btn btn-primary">Add New Rolles</a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Film</th>
+                <th>Acteur</th>
+                <th>Personage</th>
+                <th>Acties</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for role, film_title, acteur_voornaam, acteur_achternaam in roles %}
+            <tr>
+                <td>{{ role.id }}</td>
+                <td>{{ film_title }}</td>
+                <td>{{ acteur_voornaam }} {{ acteur_achternaam }}</td>
+                <td>{{ role.personage }}</td>
+                <td>
+
+                    <a href="{{ url_for('main.rol_edit', id=role.id) }}" class="btn btn-sm btn-secondary">Edit</a>
+                    <a href="{{ url_for('main.rol_delete', id=role.id) }}" class="btn btn-sm btn-danger"
+                        onclick="return confirm('Weet je het zeker?');">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
