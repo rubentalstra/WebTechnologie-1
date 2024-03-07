@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, ValidationError
-from wtforms.validators import InputRequired, DataRequired, Email, Length, EqualTo
+from wtforms import IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, ValidationError
+from wtforms.validators import InputRequired, DataRequired, Optional, Email, URL, Length, EqualTo
 from app.models import Gebruiker
 
 class LoginForm(FlaskForm):
@@ -26,11 +26,22 @@ class RegistratieForm(FlaskForm):
         if Gebruiker.query.filter_by(email=field.data).first():
             raise ValidationError('Dit e-mailadres staat al geregistreerd!')
         
-
+    
 class FilmForm(FlaskForm):
     titel = StringField('Titel', validators=[DataRequired()])
     regisseur_id = SelectField('Regisseur', coerce=int, validators=[DataRequired()])
     jaar = IntegerField('Jaar', validators=[DataRequired()])
+    trailer_url = StringField('Trailer URL', validators=[Optional(), URL()])
+    bezoekers = IntegerField('Bezoekers', validators=[Optional()])
+    omzet = IntegerField('Omzet', validators=[Optional()])
+    overzicht = TextAreaField('Overzicht', validators=[Optional()])
     submit = SubmitField('Film Toevoegen')
-
     
+class CitaatForm(FlaskForm):
+    inhoud = TextAreaField('Citaat', validators=[DataRequired(message="Quote content is required")])
+    submit = SubmitField('Add Quote')
+
+class RegisseurForm(FlaskForm):
+    voornaam = StringField('Voornaam', validators=[DataRequired()])
+    achternaam = StringField('Achternaam', validators=[DataRequired()])
+    submit = SubmitField('Regisseur Toevoegen')

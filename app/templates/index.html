@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mt-4">
+
+    {% include 'flash_messages_template.html' %}
+
     <h1>Nederlandse Films</h1>
     <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for film in films %}
@@ -11,7 +14,7 @@
                     <h5 class="card-title">{{ film.titel }}</h5>
                     <p class="card-text">Regisseur: {{ film.regisseur.voornaam }} {{ film.regisseur.achternaam }}</p>
                     <p class="card-text">Jaar: {{ film.jaar }}</p>
-                    <a href="{{ url_for('film_detail', id=film.id) }}" class="btn btn-primary">Meer details</a>
+                    <a href="{{ url_for('main.film_detail', id=film.id) }}" class="btn btn-primary">Meer details</a>
                 </div>
             </div>
         </div>

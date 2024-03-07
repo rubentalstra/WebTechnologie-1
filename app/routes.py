@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user
-from .models import Gebruiker, Film, Regisseur
-from .forms import FilmForm, LoginForm, RegistratieForm
+from .models import Citaat, Gebruiker, Film, Regisseur
+from .forms import CitaatForm, FilmForm, LoginForm, RegisseurForm, RegistratieForm
 from . import db, bcrypt
 
 app = Blueprint('main', __name__)
@@ -33,7 +33,7 @@ def login():
         else:
             flash('Login mislukt. Controleer e-mail en wachtwoord.', 'danger')
     
-    return render_template('login.html', form=form, login_page=True)
+    return render_template('login.html', form=form)
 
 
 @app.route('/logout')
@@ -55,39 +55,60 @@ def register():
         return redirect(url_for('main.login'))
     return render_template('register.html', form=form)
 
-@app.route('/film/<int:id>')
+
+
+@app.route('/film/<int:id>', methods=['GET', 'POST'])
 def film_detail(id):
     film = Film.query.get_or_404(id)
-    return render_template('film_detail.html', film=film)
+    quotes = Citaat.query.filter_by(film_id=id).all()  # Fetch quotes related to the film
+    
+    form = CitaatForm()
+    if form.validate_on_submit():
+        new_quote = Citaat(inhoud=form.inhoud.data, film_id=id)
+        db.session.add(new_quote)
+        db.session.commit()
+        flash('Quote successfully added.', 'success')
+        return redirect(url_for('main.film_detail', id=id))  # Refresh the page to show the new quote
+    
+    return render_template('film_detail.html', film=film, quotes=quotes, form=form)
 
-
-
-# @app.route('/film/add', methods=['GET', 'POST'])
-# @login_required
-# def add_film():
-#     form = FilmForm()
-#     if form.validate_on_submit():
-#         film = Film(titel=form.titel.data, regisseur_id=form.regisseur_id.data, jaar=form.jaar.data)
-#         db.session.add(film)
-#         db.session.commit()
-#         flash('De film is succesvol toegevoegd!', 'success')
-#         return redirect(url_for('main.index'))
-#     return render_template('add_film.html', title='Film Toevoegen', form=form)
 
     
 @app.route('/film/add', methods=['GET', 'POST'])
 @login_required
-def add_film():
+def film_add():
     form = FilmForm()
     form.regisseur_id.choices = [(0, 'Choose...')] + [(r.id, r.voornaam + ' '  + r.achternaam ) for r in Regisseur.query.all()]
-    
+
     if form.validate_on_submit():
-        film = Film(titel=form.titel.data, regisseur_id=form.regisseur_id.data, jaar=form.jaar.data)
+        # Create a new Film instance with all the form fields
+        film = Film(
+            titel=form.titel.data, 
+            regisseur_id=form.regisseur_id.data,
+            jaar=form.jaar.data,
+            trailer_url=form.trailer_url.data,
+            bezoekers=form.bezoekers.data,
+            omzet=form.omzet.data,
+            overzicht=form.overzicht.data
+        )
         db.session.add(film)
         db.session.commit()
         flash('De film is succesvol toegevoegd!', 'success')
         return redirect(url_for('main.index'))
-    return render_template('add_film.html', title='Film Toevoegen', form=form)
+    return render_template('film_add.html', title='Film Toevoegen', form=form)
+
+
+@app.route('/film/<int:film_id>/add_quote', methods=['GET', 'POST'])
+@login_required
+def add_quote_for_film(film_id):
+    form = CitaatForm()
+    if form.validate_on_submit():
+        quote = Citaat(inhoud=form.inhoud.data, film_id=film_id)
+        db.session.add(quote)
+        db.session.commit()
+        flash('Quote successfully added.', 'success')
+        return redirect(url_for('main.film_detail', id=film_id))
+    return render_template('film_add_quote.html', form=form, film_id=film_id)
 
 
 @app.route('/film/edit/<int:id>', methods=['GET', 'POST'])
@@ -99,19 +120,61 @@ def edit_film(id):
         return redirect(url_for('film_detail', id=film.id))
     return render_template('edit_film.html', film=film)
 
-@app.route('/film/delete/<int:id>', methods=['POST'])
+
+@app.route('/film/delete/<int:id>')
 @login_required
 def delete_film(id):
     film = Film.query.get_or_404(id)
-    # Logic to delete film
-    return redirect(url_for('index'))
+    db.session.delete(film)
+    db.session.commit()
+    flash('Film successfully deleted.', 'success')
+    return redirect(url_for('main.index'))
 
 
-@app.route('/regisseurs')
-@login_required
+
+
+
+@app.route('/regisseurs', methods=['GET'])
 def regisseurs():
-    # Logic to display directors
-    pass
+    regisseurs = Regisseur.query.all()  # Fetch all regisseurs
+    return render_template('regisseurs.html', regisseurs=regisseurs)
+
+
+@app.route('/regisseur/add', methods=['GET', 'POST'])
+@login_required
+def add_regisseur():
+    form = RegisseurForm()
+    if form.validate_on_submit():
+        regisseur = Regisseur(voornaam=form.voornaam.data, achternaam=form.achternaam.data)
+        db.session.add(regisseur)
+        db.session.commit()
+        flash('De regisseur is succesvol toegevoegd!', 'success')
+        return redirect(url_for('main.regisseurs'))
+    return render_template('regisseur_add.html', form=form)
+
+
+@app.route('/regisseur/edit/<int:id>')
+@login_required
+def edit_regisseur(id):
+    # Logic to edit an existing regisseur
+    # This can redirect to a form page pre-populated with regisseur data
+    return redirect(url_for('regisseur_form', id=id))
+
+
+@app.route('/regisseur/delete/<int:id>')
+@login_required
+def delete_regisseur(id):
+    regisseur = Regisseur.query.get_or_404(id)
+    if regisseur.films:
+        flash('Cannot delete a Regisseur connected to films.', 'danger')
+    else:
+        db.session.delete(regisseur)
+        db.session.commit()
+        flash('Regisseur successfully deleted.', 'success')
+    return redirect(url_for('main.regisseurs'))
+
+
+
 
 @app.route('/acteurs')
 @login_required
