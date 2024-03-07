@@ -32,6 +32,13 @@ class Film(db.Model):
     jaar = db.Column(db.Integer, nullable=False)
     citaten = db.relationship('Citaat', backref='film', lazy=True)
 
+    # Define an __init__ method that explicitly accepts arguments
+    def __init__(self, titel, regisseur_id, jaar):
+        self.titel = titel
+        self.regisseur_id = regisseur_id
+        self.jaar = jaar
+        
+
 class Citaat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     inhoud = db.Column(db.Text, nullable=False)

@@ -9,6 +9,22 @@
                     <h2 class="card-title text-center">Inloggen</h2>
                     <form action="" method="post" class="mt-4">
                         {{ form.hidden_tag() }}
+
+                        <!-- Display global form errors -->
+                        {% if login_page %}
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                        {% endif %}
+
+
                         <div class="mb-3">
                             {{ form.email.label(class="form-label") }}
                             {{ form.email(class="form-control") }}

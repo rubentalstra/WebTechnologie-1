@@ -1,12 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, PasswordField, BooleanField, SubmitField, ValidationError
+from wtforms import IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, ValidationError
 from wtforms.validators import InputRequired, DataRequired, Email, Length, EqualTo
-
 from app.models import Gebruiker
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[InputRequired(), Email(message='Ongeldig email'), Length(max=100)])
-    wachtwoord = PasswordField('Wachtwoord', validators=[InputRequired(), Length(min=8, max=80)])
+    email = StringField('Email', validators=[DataRequired(), Email(message='Ongeldig email'), Length(max=100)])
+    wachtwoord = PasswordField('Wachtwoord', validators=[DataRequired(), Length(min=8, max=80)])
     remember_me = BooleanField('Onthoud mij')
     submit = SubmitField('Inloggen')
 
@@ -30,6 +29,8 @@ class RegistratieForm(FlaskForm):
 
 class FilmForm(FlaskForm):
     titel = StringField('Titel', validators=[DataRequired()])
-    regisseur_id = IntegerField('Regisseur ID', validators=[DataRequired()])
+    regisseur_id = SelectField('Regisseur', coerce=int, validators=[DataRequired()])
     jaar = IntegerField('Jaar', validators=[DataRequired()])
     submit = SubmitField('Film Toevoegen')
+
+    

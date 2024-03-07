@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user
-from .models import Gebruiker, Film
+from .models import Gebruiker, Film, Regisseur
 from .forms import FilmForm, LoginForm, RegistratieForm
 from . import db, bcrypt
 
@@ -33,7 +33,7 @@ def login():
         else:
             flash('Login mislukt. Controleer e-mail en wachtwoord.', 'danger')
     
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, login_page=True)
 
 
 @app.route('/logout')
@@ -62,9 +62,25 @@ def film_detail(id):
 
 
 
+# @app.route('/film/add', methods=['GET', 'POST'])
+# @login_required
+# def add_film():
+#     form = FilmForm()
+#     if form.validate_on_submit():
+#         film = Film(titel=form.titel.data, regisseur_id=form.regisseur_id.data, jaar=form.jaar.data)
+#         db.session.add(film)
+#         db.session.commit()
+#         flash('De film is succesvol toegevoegd!', 'success')
+#         return redirect(url_for('main.index'))
+#     return render_template('add_film.html', title='Film Toevoegen', form=form)
+
+    
 @app.route('/film/add', methods=['GET', 'POST'])
+@login_required
 def add_film():
     form = FilmForm()
+    form.regisseur_id.choices = [(0, 'Choose...')] + [(r.id, r.voornaam + ' '  + r.achternaam ) for r in Regisseur.query.all()]
+    
     if form.validate_on_submit():
         film = Film(titel=form.titel.data, regisseur_id=form.regisseur_id.data, jaar=form.jaar.data)
         db.session.add(film)
@@ -72,6 +88,7 @@ def add_film():
         flash('De film is succesvol toegevoegd!', 'success')
         return redirect(url_for('main.index'))
     return render_template('add_film.html', title='Film Toevoegen', form=form)
+
 
 @app.route('/film/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
