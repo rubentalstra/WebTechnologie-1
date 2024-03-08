@@ -34,12 +34,12 @@
 
                             {% if current_user.is_authenticated %}
                             <li class="nav-item">
-                                <a class="nav-link{{ ' active' if request.path == url_for('main.regisseurs') else '' }}"
-                                    href="{{ url_for('main.regisseurs') }}">Regisseurs</a>
+                                <a class="nav-link{{ ' active' if request.path == url_for('regisseur.regisseurs') else '' }}"
+                                    href="{{ url_for('regisseur.regisseurs') }}">Regisseurs</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link{{ ' active' if request.path == url_for('main.acteurs') else '' }}"
-                                    href="{{ url_for('main.acteurs') }}">Acteurs</a>
+                                <a class="nav-link{{ ' active' if request.path == url_for('acteur.acteurs') else '' }}"
+                                    href="{{ url_for('acteur.acteurs') }}">Acteurs</a>
                             </li>
                             {% endif %}
                         </ul>
@@ -47,10 +47,10 @@
                         <div class="d-flex align-items-center">
                             {% if current_user.is_authenticated %}
                             <span class="navbar-text me-2">{{ current_user.username }}</span>
-                            <a class="btn btn-secondary me-2" href="{{ url_for('main.logout') }}">Uitloggen</a>
+                            <a class="btn btn-secondary me-2" href="{{ url_for('auth.logout') }}">Uitloggen</a>
                             {% else %}
-                            <a class="btn btn-secondary me-2" href="{{ url_for('main.login') }}">Inloggen</a>
-                            <a class="btn btn-secondary" href="{{ url_for('main.register') }}">Registreren</a>
+                            <a class="btn btn-secondary me-2" href="{{ url_for('auth.login') }}">Inloggen</a>
+                            <a class="btn btn-secondary" href="{{ url_for('regisseur.register') }}">Registreren</a>
                             {% endif %}
                         </div>
                     </div>

@@ -43,7 +43,7 @@
         <h1>Nederlandse Films</h1>
 
         {% if current_user.is_authenticated %}
-        <a href="{{ url_for('main.film_add') }}" class="btn btn-primary">Add New Film</a>
+        <a href="{{ url_for('film.film_add') }}" class="btn btn-primary">Add New Film</a>
         {% endif %}
     </div>
 
@@ -63,7 +63,7 @@
                     <h5 class="card-title">{{ film.titel }}</h5>
                     <p class="card-text">Regisseur: {{ film.regisseur.voornaam }} {{ film.regisseur.achternaam }}</p>
                     <p class="card-text">Jaar: {{ film.jaar }}</p>
-                    <a href="{{ url_for('main.film_detail', id=film.id) }}" class="btn btn-primary">Lees Meer</a>
+                    <a href="{{ url_for('film.film_detail', id=film.id) }}" class="btn btn-primary">Lees Meer</a>
                 </div>
             </div>
         </div>

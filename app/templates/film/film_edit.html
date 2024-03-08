@@ -21,7 +21,7 @@
     {% endwith %}
 
 
-    <form action="{{ url_for('main.edit_film', id=film.id) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ url_for('film.edit_film', id=film.id) }}" method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div class="mb-3 form-group">
             {{ form.titel.label }} <span class="text-danger">*</span>
@@ -72,7 +72,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Update</button>
-        <a href="{{ url_for('main.film_detail', id=film.id) }}" class="btn btn-secondary">Cancel</a>
+        <a href="{{ url_for('film.film_detail', id=film.id) }}" class="btn btn-secondary">Cancel</a>
 
     </form>
 </div>

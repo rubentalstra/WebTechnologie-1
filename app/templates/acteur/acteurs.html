@@ -2,19 +2,19 @@
 
 {% block content %}
 <div class="container mt-4">
+
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Regisseurs</h2>
-        <a href="{{ url_for('main.regisseur_add') }}" class="btn btn-primary">Add New Regisseur</a>
+        <h2>Acteurs</h2>
+        <a href="{{ url_for('acteur.acteur_add') }}" class="btn btn-primary">Add New Acteur</a>
     </div>
 
     <!-- Search Form -->
-    <form action="{{ url_for('main.regisseurs') }}" method="GET" class="mb-3">
+    <form action="{{ url_for('acteur.acteurs') }}" method="GET" class="mb-3">
         <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Search for regisseurs...">
+            <input type="text" name="search" class="form-control" placeholder="Search for acteurs...">
             <button type="submit" class="btn btn-outline-secondary">Search</button>
         </div>
     </form>
-
 
     {% include 'flash_messages_template.html' %}
 
@@ -29,16 +29,15 @@
                 </tr>
             </thead>
             <tbody>
-                {% for regisseur in regisseurs %}
+                {% for acteur in acteurs %}
                 <tr>
-                    <td>{{ regisseur.voornaam }}</td>
-                    <td>{{ regisseur.achternaam }}</td>
+                    <td>{{ acteur.voornaam }}</td>
+                    <td>{{ acteur.achternaam }}</td>
                     <td>
-                        <a href="{{ url_for('main.regisseur_edit', id=regisseur.id) }}"
+                        <a href="{{ url_for('acteur.acteur_edit', id=acteur.id) }}"
                             class="btn btn-secondary btn-sm">Edit</a>
                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#deleteConfirmationModal"
-                            data-regisseur-id="{{ regisseur.id }}">Delete</button>
+                            data-bs-target="#deleteConfirmationModal" data-acteur-id="{{ acteur.id }}">Delete</button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -57,11 +56,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete this regisseur?
+                Are you sure you want to delete this acteur?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <a href="#" class="btn btn-danger" id="deleteRegisseurBtn">Delete</a>
+                <a href="#" class="btn btn-danger" id="deleteActeurBtn">Delete</a>
             </div>
         </div>
     </div>
@@ -78,10 +77,10 @@
             // Button that triggered the modal
             var button = event.relatedTarget
             // Extract info from data-* attributes
-            var regisseurId = button.getAttribute('data-regisseur-id')
+            var acteurId = button.getAttribute('data-acteur-id')
             // Update the modal's delete button href
-            var deleteButton = deleteConfirmationModal.querySelector('.modal-footer #deleteRegisseurBtn')
-            deleteButton.href = `/regisseur/delete/${regisseurId}`
+            var deleteButton = deleteConfirmationModal.querySelector('.modal-footer #deleteActeurBtn')
+            deleteButton.href = `/acteur/delete/${acteurId}`
         })
     });
 </script>

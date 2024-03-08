@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_bcrypt import Bcrypt
 
-db = SQLAlchemy()
+db: SQLAlchemy = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()
@@ -28,12 +28,20 @@ def create_app():
     mail.init_app(app)
     bcrypt.init_app(app)
     
-    login_manager.login_view = 'main.login'
+    login_manager.login_view = 'auth.login'
     login_manager.login_message_category = 'info'
 
 
-    # Importeer en registreer de main Blueprint
-    from app.routes import app as main_blueprint
-    app.register_blueprint(main_blueprint)
+    from app.routes.acteur import acteur_bp
+    from app.routes.auth import auth_bp
+    from app.routes.film import film_bp
+    from app.routes.main import main_bp
+    from app.routes.regisseur import regisseur_bp
+
+    app.register_blueprint(acteur_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(film_bp)
+    app.register_blueprint(regisseur_bp)
 
     return app

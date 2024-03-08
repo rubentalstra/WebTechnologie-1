@@ -1,4 +1,3 @@
-from email.policy import default
 from app import db, bcrypt, login_manager
 from flask_login import UserMixin
 
@@ -13,7 +12,7 @@ class Gebruiker(db.Model, UserMixin):
     email = db.Column(db.String(100), unique=True, nullable=False)
     wachtwoord_hash = db.Column(db.String(128))
 
-    def __init__(self, username, email, wachtwoord):
+    def __init__(self, username: str, email: str, wachtwoord: str):
         self.username = username
         self.email = email
         self.set_wachtwoord(wachtwoord)
@@ -38,7 +37,7 @@ class Film(db.Model):
     overzicht = db.Column(db.Text)
     citaten = db.relationship('Citaat', backref='film', lazy=True)
 
-    def __init__(self, titel, regisseur_id, jaar, trailer_url=None, poster_url=None, bezoekers=None, omzet=None, overzicht=None):
+    def __init__(self, titel: str, regisseur_id: int, jaar: int, trailer_url: str = '', poster_url: str = '', bezoekers: int = 0, omzet: int = 0, overzicht: str = ''):
         self.titel = titel
         self.regisseur_id = regisseur_id
         self.jaar = jaar
@@ -56,7 +55,7 @@ class Citaat(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'), nullable=False)
     user = db.relationship('Gebruiker', backref='quotes')
 
-    def __init__(self, inhoud, film_id, user_id):
+    def __init__(self, inhoud: str, film_id: int, user_id: int):
         self.inhoud = inhoud
         self.film_id = film_id
         self.user_id = user_id
@@ -68,7 +67,7 @@ class Regisseur(db.Model):
     achternaam = db.Column(db.String(50), nullable=False)
     films = db.relationship('Film', backref='regisseur', lazy=True)
 
-    def __init__(self, voornaam, achternaam):
+    def __init__(self, voornaam: str, achternaam: str):
         self.voornaam = voornaam
         self.achternaam = achternaam
 
@@ -78,7 +77,7 @@ class Acteur(db.Model):
     achternaam = db.Column(db.String(50), nullable=False)
     rollen = db.relationship('Rol', backref='acteur', lazy=True)
 
-    def __init__(self, voornaam, achternaam):
+    def __init__(self, voornaam: str, achternaam: str):
         self.voornaam = voornaam
         self.achternaam = achternaam
 
@@ -88,7 +87,7 @@ class Rol(db.Model):
     film_id = db.Column(db.Integer, db.ForeignKey('film.id'), nullable=False)
     personage = db.Column(db.String(100), nullable=False)
 
-    def __init__(self, acteur_id, film_id, personage):
+    def __init__(self, acteur_id: int, film_id: int, personage: str):
         self.acteur_id = acteur_id
         self.film_id = film_id
         self.personage = personage
