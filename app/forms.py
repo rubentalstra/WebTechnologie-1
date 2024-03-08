@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import IntegerField, SelectField, StringField, PasswordField, BooleanField, SubmitField, TextAreaField, ValidationError
 from wtforms.validators import InputRequired, DataRequired, Optional, Email, URL, Length, EqualTo
 from app.models import Gebruiker
@@ -32,6 +33,7 @@ class FilmForm(FlaskForm):
     regisseur_id = SelectField('Regisseur', coerce=int, validators=[DataRequired()])
     jaar = IntegerField('Jaar', validators=[DataRequired()])
     trailer_url = StringField('Trailer URL', validators=[Optional(), URL()])
+    poster = FileField('Film Poster', validators=[FileAllowed(['jpg', 'png'], 'Images only!')])
     bezoekers = IntegerField('Bezoekers', validators=[Optional()])
     omzet = IntegerField('Omzet', validators=[Optional()])
     overzicht = TextAreaField('Overzicht', validators=[Optional()])
@@ -54,6 +56,5 @@ class ActeurForm(FlaskForm):
 
 class RolForm(FlaskForm):
     acteur_id = SelectField('Acteur', coerce=int, validators=[DataRequired()])   
-    film_id = SelectField('Film', coerce=int, validators=[DataRequired()])
     personage = StringField('Personage', validators=[DataRequired()])
     submit = SubmitField('Rol Toevoegen')

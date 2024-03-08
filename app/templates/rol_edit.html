@@ -7,21 +7,22 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Rol Toevoegen/Bewerken</h2>
+    <h2>Rol Bewerken</h2>
     <form action="" method="POST">
         {{ form.hidden_tag() }}
-        <div class="mb-3 form-group">
+        <div class="mb-3">
             {{ form.acteur_id.label }} <span class="text-danger">*</span>
             {{ form.acteur_id(class="form-control selectpicker", data_live_search="true") }}
         </div>
-        <div class="mb-3 form-group">
-            {{ form.personage.label(class="form-label") }} <span class="text-danger">*</span>
+        <div class="mb-3">
+            {{ form.personage.label }} <span class="text-danger">*</span>
             {{ form.personage(class="form-control") }}
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Update Rol</button>
     </form>
 </div>
 {% endblock %}
+
 
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

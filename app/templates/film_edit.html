@@ -21,7 +21,7 @@
     {% endwith %}
 
 
-    <form action="{{ url_for('main.edit_film', id=film.id) }}" method="POST">
+    <form action="{{ url_for('main.edit_film', id=film.id) }}" method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div class="mb-3 form-group">
             {{ form.titel.label }} <span class="text-danger">*</span>
@@ -51,7 +51,29 @@
             {{ form.overzicht.label }}
             {{ form.overzicht(class="form-control") }}
         </div>
+
+
+        <!-- Current Film Poster -->
+        {% if film.poster_url %}
+        <div class="mb-3">
+            <label>Current Film Poster:</label>
+            <div>
+                <img src="{{ url_for('static', filename='film_pics/' + film.poster_url) }}" alt="Film Poster"
+                    style="max-width: 200px;">
+            </div>
+        </div>
+        {% endif %}
+
+
+        <!-- File Upload for New Poster -->
+        <div class="mb-3 form-group">
+            {{ form.poster.label }}
+            {{ form.poster(class="form-control") }}
+        </div>
+
         <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ url_for('main.film_detail', id=film.id) }}" class="btn btn-secondary">Cancel</a>
+
     </form>
 </div>
 {% endblock %}

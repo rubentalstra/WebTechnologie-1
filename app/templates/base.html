@@ -34,20 +34,12 @@
 
                             {% if current_user.is_authenticated %}
                             <li class="nav-item">
-                                <a class="nav-link{{ ' active' if request.path == url_for('main.film_add') else '' }}"
-                                    href="{{ url_for('main.film_add') }}">Add Films</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link{{ ' active' if request.path == url_for('main.regisseurs') else '' }}"
                                     href="{{ url_for('main.regisseurs') }}">Regisseurs</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link{{ ' active' if request.path == url_for('main.acteurs') else '' }}"
                                     href="{{ url_for('main.acteurs') }}">Acteurs</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link{{ ' active' if request.path == url_for('main.rollen') else '' }}"
-                                    href="{{ url_for('main.rollen') }}">Rollen</a>
                             </li>
                             {% endif %}
                         </ul>

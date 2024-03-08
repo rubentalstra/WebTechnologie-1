@@ -32,16 +32,18 @@ class Film(db.Model):
     regisseur_id = db.Column(db.Integer, db.ForeignKey('regisseur.id'), nullable=False)
     jaar = db.Column(db.Integer, nullable=False)
     trailer_url = db.Column(db.String(255))  # Assuming trailers are hosted externally
+    poster_url = db.Column(db.String(255))  # Add this line to store the image path
     bezoekers = db.Column(db.Integer, default=None)  # Visitor count
     omzet = db.Column(db.BigInteger, default=None)  # Revenue, using BigInteger for larger numbers
     overzicht = db.Column(db.Text)  # General overview or description of the film
     citaten = db.relationship('Citaat', backref='film', lazy=True)
 
-    def __init__(self, titel, regisseur_id, jaar, trailer_url=None, bezoekers=None, omzet=None, overzicht=None):
+    def __init__(self, titel, regisseur_id, jaar, trailer_url=None, poster_url=None, bezoekers=None, omzet=None, overzicht=None):
         self.titel = titel
         self.regisseur_id = regisseur_id
         self.jaar = jaar
         self.trailer_url = trailer_url
+        self.poster_url = poster_url
         self.bezoekers = bezoekers
         self.omzet = omzet
         self.overzicht = overzicht
