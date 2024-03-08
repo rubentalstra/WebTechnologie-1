@@ -22,8 +22,9 @@
                     <!-- Edit Film option -->
                     <li><a class="dropdown-item" href="{{ url_for('main.edit_film', id=film.id) }}">Edit Film</a></li>
                     <!-- Delete Film option -->
-                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                    <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal"
                             data-bs-target="#deleteConfirmationModal" data-film-id="{{ film.id }}">Delete Film</a></li>
+
                 </ul>
             </div>
             {% endif %}
@@ -61,6 +62,16 @@
                     <p><strong>Trailer URL:</strong> <a href="{{ film.trailer_url }}" target="_blank">{{
                             film.trailer_url }}</a>
                     </p>
+
+                    {% if film.trailer_url %}
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe class="embed-responsive-item"
+                            src="https://www.youtube.com/embed/{{ film.trailer_url.split('v=')[1] }}" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    </div>
+                    {% endif %}
+
                 </div>
                 <div class="col-md-4">
                     <!-- If you have an image or poster for the film, you can display it here -->
@@ -115,23 +126,49 @@
 
         <!-- Quotes Tab Pane -->
         <div class="tab-pane fade" id="quotes" role="tabpanel" aria-labelledby="quotes-tab">
-            <!-- Quotes content goes here -->
             <div class="container mt-4">
                 <h3>Citaat</h3>
                 {% for quote in quotes %}
-                <blockquote class="blockquote">
-                    <p class="mb-0">{{ quote.inhoud }}</p>
+
+
+
+                <blockquote class="blockquote d-flex justify-content-between align-items-center">
+                    <div class="flex-grow-1">
+                        <p class="mb-1">{{ quote.inhoud }}</p>
+                        <footer class="blockquote-footer">Posted by {{ quote.user.username }}</footer>
+                    </div>
+                    <!-- Check if the current user is the creator of the quote -->
+                    {% if current_user.is_authenticated and quote.user_id == current_user.id %}
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                            id="dropdownMenuButton{{ quote.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                            Actions
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ quote.id }}">
+                            <!-- <li><a class="dropdown-item"
+                                    href="{{ url_for('main.film_edit_quote', quote_id=quote.id) }}">Edit</a></li> -->
+                            <li><a class="dropdown-item text-danger"
+                                    href="{{ url_for('main.film_delete_quote', quote_id=quote.id) }}"
+                                    onclick="return confirm('Are you sure?');">Delete</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}
                 </blockquote>
+
+
+
+
                 {% else %}
                 <p>No quotes yet.</p>
                 {% endfor %}
 
-                <!-- Add Quote Form -->
+
+
+
                 {% if current_user.is_authenticated %}
                 <h4>Add a new Citaat</h4>
+                <form action="{{ url_for('main.film_add_quote', id=film.id) }}" method="POST">
 
-
-                <form action="" method="POST">
                     {{ form.hidden_tag() }}
                     <div class="form-group">
                         {{ form.inhoud.label }}
@@ -142,6 +179,8 @@
                 {% endif %}
             </div>
         </div>
+
+
     </div>
 
 
@@ -188,6 +227,27 @@
             var deleteButton = deleteConfirmationModal.querySelector('.modal-footer #deleteFilmBtn')
             deleteButton.href = `/film/delete/${filmId}`
         })
+
+
+        // Check for the 'tab' query parameter and activate the corresponding tab
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTab = urlParams.get('tab');
+
+        if (activeTab) {
+            const newActiveTab = document.querySelector(`#${activeTab}-tab`);
+            const newActivePane = document.querySelector(`#${activeTab}`);
+
+            // Deactivate the currently active tab and pane
+            document.querySelector('.nav-link.active').classList.remove('active');
+            document.querySelector('.tab-pane.show.active').classList.remove('show', 'active');
+
+            // Activate the specified tab and pane
+            if (newActiveTab && newActivePane) {
+                newActiveTab.classList.add('active');
+                newActivePane.classList.add('show', 'active');
+            }
+        }
+
     });
 </script>
 {% endblock %}

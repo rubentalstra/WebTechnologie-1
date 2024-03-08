@@ -1,7 +1,7 @@
 import os
 import secrets
 from flask import Blueprint, current_app, render_template, redirect, url_for, request, flash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 from markupsafe import Markup
 from .models import Acteur, Citaat, Gebruiker, Film, Regisseur, Rol
 from .forms import ActeurForm, CitaatForm, FilmForm, LoginForm, RegisseurForm, RegistratieForm, RolForm
@@ -55,21 +55,59 @@ def register():
 
 
 
-@app.route('/film/<int:id>', methods=['GET', 'POST'])
+@app.route('/film/<int:id>', methods=['GET'])
 def film_detail(id):
+    form = CitaatForm()
     film = Film.query.get_or_404(id)
-    quotes = Citaat.query.filter_by(film_id=id).all()  # Fetch quotes related to the film
+    quotes = Citaat.query.filter_by(film_id=id).all() 
     rollen = Rol.query.join(Acteur).filter(Rol.film_id==id).all()
     
+    return render_template('films/film_detail.html', film=film, rollen=rollen, quotes=quotes, form=form)
+
+
+@app.route('/film/<int:id>/add_quote', methods=['POST'])
+@login_required
+def film_add_quote(id):
+    # film = Film.query.get_or_404(id)
     form = CitaatForm()
     if form.validate_on_submit():
-        new_quote = Citaat(inhoud=form.inhoud.data, film_id=id)
+        new_quote = Citaat(inhoud=form.inhoud.data, film_id=id, user_id=current_user.id)  # Assuming a user_id column
         db.session.add(new_quote)
         db.session.commit()
         flash('Quote successfully added.', 'success')
-        return redirect(url_for('main.film_detail', id=id))  # Refresh the page to show the new quote
+    return redirect(url_for('main.film_detail', id=id, tab='quotes'))
+
+
+@app.route('/quote/edit/<int:quote_id>', methods=['GET', 'POST'])
+@login_required
+def film_edit_quote(quote_id):
+    quote = Citaat.query.get_or_404(quote_id)
+    if quote.user_id != current_user.id:
+        flash('You do not have permission to edit this quote.', 'danger')
+        return redirect(url_for('main.index'))
     
-    return render_template('films/film_detail.html', film=film, rollen=rollen, quotes=quotes, form=form)
+    form = CitaatForm(obj=quote)
+    if form.validate_on_submit():
+        quote.inhoud = form.inhoud.data
+        db.session.commit()
+        flash('Quote successfully updated.', 'success')
+        return redirect(url_for('main.film_detail', id=quote.film_id, tab='quotes'))
+    return render_template('edit_quote.html', form=form)  # You'll need to create this template
+
+
+
+@app.route('/quote/delete/<int:quote_id>', methods=['GET'])
+@login_required
+def film_delete_quote(quote_id):
+    quote = Citaat.query.get_or_404(quote_id)
+    if quote.user_id != current_user.id:
+        flash('You do not have permission to delete this quote.', 'danger')
+        return redirect(url_for('main.index'))
+    db.session.delete(quote)
+    db.session.commit()
+    flash('Quote successfully deleted.', 'success')
+    return redirect(url_for('main.film_detail', id=quote.film_id, tab='quotes'))
+
 
 
 
@@ -202,8 +240,19 @@ def delete_film(id):
 
 @app.route('/regisseurs', methods=['GET'])
 def regisseurs():
-    regisseurs = Regisseur.query.all()  # Fetch all regisseurs
+    search_query = request.args.get('search', '')
+    if search_query:
+        regisseurs = Regisseur.query.filter(
+            db.or_(
+                Regisseur.voornaam.ilike(f'%{search_query}%'),
+                Regisseur.achternaam.ilike(f'%{search_query}%')
+            )
+        ).all()
+    else:
+        regisseurs = Regisseur.query.all()
+    
     return render_template('regisseurs/regisseurs.html', regisseurs=regisseurs)
+
 
 
 @app.route('/regisseur/add', methods=['GET', 'POST'])
@@ -253,8 +302,19 @@ def delete_regisseur(id):
 
 @app.route('/acteurs', methods=['GET'])
 def acteurs():
-    acteurs = Acteur.query.all()  # Fetch all acteurs
+    search_query = request.args.get('search', '')
+    if search_query:
+        acteurs = Acteur.query.filter(
+            db.or_(
+                Acteur.voornaam.ilike(f'%{search_query}%'),
+                Acteur.achternaam.ilike(f'%{search_query}%')
+            )
+        ).all()
+    else:
+        acteurs = Acteur.query.all()
+    
     return render_template('acteurs/acteurs.html', acteurs=acteurs)
+
 
 @app.route('/acteur/add', methods=['GET', 'POST'])
 @login_required
@@ -325,7 +385,7 @@ def rol_add(film_id):
         db.session.add(rol)
         db.session.commit()
         flash('De Rol is succesvol toegevoegd!', 'success')
-        return redirect(url_for('main.film_detail', id=film_id))
+        return redirect(url_for('main.film_detail', id=film_id, tab='actors-roles'))
     
     return render_template('films/film_rol_add.html', form=form, film_id=film_id)
 
@@ -344,7 +404,7 @@ def rol_edit(id):
         rol.personage = form.personage.data
         db.session.commit()
         flash('Rol successfully updated!', 'success')
-        return redirect(url_for('main.film_detail', id=rol.film_id))
+        return redirect(url_for('main.film_detail', id=rol.film_id, tab='actors-roles'))
     
     return render_template('films/film_rol_edit.html', form=form, rol=rol)
 
@@ -357,4 +417,5 @@ def rol_delete(id):
     db.session.delete(rol)
     db.session.commit()
     flash('De Rol is succesvol verwijderd!', 'success')
-    return redirect(url_for('main.film_detail', id=film_id))
+    return redirect(url_for('main.film_detail', id=film_id, tab='actors-roles'))
+

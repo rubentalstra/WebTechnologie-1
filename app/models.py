@@ -31,11 +31,11 @@ class Film(db.Model):
     titel = db.Column(db.String(100), nullable=False)
     regisseur_id = db.Column(db.Integer, db.ForeignKey('regisseur.id'), nullable=False)
     jaar = db.Column(db.Integer, nullable=False)
-    trailer_url = db.Column(db.String(255))  # Assuming trailers are hosted externally
-    poster_url = db.Column(db.String(255))  # Add this line to store the image path
-    bezoekers = db.Column(db.Integer, default=None)  # Visitor count
-    omzet = db.Column(db.BigInteger, default=None)  # Revenue, using BigInteger for larger numbers
-    overzicht = db.Column(db.Text)  # General overview or description of the film
+    trailer_url = db.Column(db.String(255))
+    poster_url = db.Column(db.String(255)) 
+    bezoekers = db.Column(db.Integer, default=None) 
+    omzet = db.Column(db.BigInteger, default=None)
+    overzicht = db.Column(db.Text)
     citaten = db.relationship('Citaat', backref='film', lazy=True)
 
     def __init__(self, titel, regisseur_id, jaar, trailer_url=None, poster_url=None, bezoekers=None, omzet=None, overzicht=None):
@@ -53,10 +53,14 @@ class Citaat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     inhoud = db.Column(db.Text, nullable=False)
     film_id = db.Column(db.Integer, db.ForeignKey('film.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('gebruiker.id'), nullable=False)
+    user = db.relationship('Gebruiker', backref='quotes')
 
-    def __init__(self, inhoud, film_id):
+    def __init__(self, inhoud, film_id, user_id):
         self.inhoud = inhoud
         self.film_id = film_id
+        self.user_id = user_id
+
 
 class Regisseur(db.Model):
     id = db.Column(db.Integer, primary_key=True)

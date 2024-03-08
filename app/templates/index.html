@@ -1,4 +1,39 @@
 {% extends "base.html" %}
+
+
+{% block extra_head %}
+<style>
+    .card {
+        transition: transform .2s;
+        /* Animation */
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+
+
+
+    .card-title {
+        font-size: 1.25rem;
+        /* Larger title font */
+        font-weight: bold;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+        /* Slightly smaller text for details */
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}
+
+
 {% block content %}
 <div class="container mt-4">
 
@@ -28,11 +63,12 @@
                     <h5 class="card-title">{{ film.titel }}</h5>
                     <p class="card-text">Regisseur: {{ film.regisseur.voornaam }} {{ film.regisseur.achternaam }}</p>
                     <p class="card-text">Jaar: {{ film.jaar }}</p>
-                    <a href="{{ url_for('main.film_detail', id=film.id) }}" class="btn btn-primary">Meer details</a>
+                    <a href="{{ url_for('main.film_detail', id=film.id) }}" class="btn btn-primary">Lees Meer</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+
 </div>
 {% endblock %}
