@@ -14,11 +14,6 @@ def index():
     films = Film.query.all()
     return render_template('index.html', films=films)
 
-@app.route('/welkom')
-@login_required
-def welkom():
-    return render_template('welcome.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -31,12 +26,12 @@ def login():
 
             next_page = request.args.get('next')
             if not next_page or not next_page.startswith('/'):
-                next_page = url_for('main.welkom')
+                next_page = url_for('main.index')
             return redirect(next_page)
         else:
             flash('Login mislukt. Controleer e-mail en wachtwoord.', 'danger')
     
-    return render_template('login.html', form=form)
+    return render_template('auth/login.html', form=form)
 
 
 @app.route('/logout')
@@ -56,7 +51,7 @@ def register():
         db.session.commit()
         flash('Je account is aangemaakt. Je kunt nu inloggen.', 'success')
         return redirect(url_for('main.login'))
-    return render_template('register.html', form=form)
+    return render_template('auth/register.html', form=form)
 
 
 
@@ -74,7 +69,7 @@ def film_detail(id):
         flash('Quote successfully added.', 'success')
         return redirect(url_for('main.film_detail', id=id))  # Refresh the page to show the new quote
     
-    return render_template('film_detail.html', film=film, rollen=rollen, quotes=quotes, form=form)
+    return render_template('films/film_detail.html', film=film, rollen=rollen, quotes=quotes, form=form)
 
 
 
@@ -122,7 +117,7 @@ def film_add():
         db.session.commit()
         flash('De film is succesvol toegevoegd!', 'success')
         return redirect(url_for('main.index'))
-    return render_template('film_add.html', title='Film Toevoegen', form=form)
+    return render_template('films/film_add.html', title='Film Toevoegen', form=form)
 
 
 @app.route('/film/<int:film_id>/add_quote', methods=['GET', 'POST'])
@@ -135,7 +130,7 @@ def add_quote_for_film(film_id):
         db.session.commit()
         flash('Quote successfully added.', 'success')
         return redirect(url_for('main.film_detail', id=film_id))
-    return render_template('film_add_quote.html', form=form, film_id=film_id)
+    return render_template('films/film_add_quote.html', form=form, film_id=film_id)
 
 
 
@@ -172,7 +167,7 @@ def edit_film(id):
         flash('De film is succesvol bijgewerkt!', 'success')
         return redirect(url_for('main.film_detail', id=film.id))
     
-    return render_template('film_edit.html', form=form, film=film)
+    return render_template('films/film_edit.html', form=form, film=film)
 
 
 
@@ -208,7 +203,7 @@ def delete_film(id):
 @app.route('/regisseurs', methods=['GET'])
 def regisseurs():
     regisseurs = Regisseur.query.all()  # Fetch all regisseurs
-    return render_template('regisseurs.html', regisseurs=regisseurs)
+    return render_template('regisseurs/regisseurs.html', regisseurs=regisseurs)
 
 
 @app.route('/regisseur/add', methods=['GET', 'POST'])
@@ -221,7 +216,7 @@ def regisseur_add():
         db.session.commit()
         flash('De regisseur is succesvol toegevoegd!', 'success')
         return redirect(url_for('main.regisseurs'))
-    return render_template('regisseur_add.html', form=form)
+    return render_template('regisseurs/regisseur_add.html', form=form)
 
 
 @app.route('/regisseur/edit/<int:id>', methods=['GET', 'POST'])
@@ -238,7 +233,7 @@ def regisseur_edit(id):
         flash('De regisseur is succesvol bijgewerkt!', 'success')
         return redirect(url_for('main.regisseurs', id=regisseur.id))
     
-    return render_template('regisseur_edit.html', form=form)
+    return render_template('regisseurs/regisseur_edit.html', form=form)
 
 
 @app.route('/regisseur/delete/<int:id>')
@@ -259,7 +254,7 @@ def delete_regisseur(id):
 @app.route('/acteurs', methods=['GET'])
 def acteurs():
     acteurs = Acteur.query.all()  # Fetch all acteurs
-    return render_template('acteurs.html', acteurs=acteurs)
+    return render_template('acteurs/acteurs.html', acteurs=acteurs)
 
 @app.route('/acteur/add', methods=['GET', 'POST'])
 @login_required
@@ -271,7 +266,7 @@ def acteur_add():
         db.session.commit()
         flash('De acteur is succesvol toegevoegd!', 'success')
         return redirect(url_for('main.acteurs'))
-    return render_template('acteur_add.html', form=form)
+    return render_template('acteurs/acteur_add.html', form=form)
 
 
 @app.route('/acteur/edit/<int:id>', methods=['GET', 'POST'])
@@ -288,7 +283,7 @@ def acteur_edit(id):
         flash('De acteur is succesvol bijgewerkt!', 'success')
         return redirect(url_for('main.acteurs', id=acteur.id))
     
-    return render_template('acteur_edit.html', form=form)
+    return render_template('acteurs/acteur_edit.html', form=form)
 
 
 @app.route('/acteur/delete/<int:id>', methods=['GET'])
@@ -332,7 +327,7 @@ def rol_add(film_id):
         flash('De Rol is succesvol toegevoegd!', 'success')
         return redirect(url_for('main.film_detail', id=film_id))
     
-    return render_template('rol_add.html', form=form, film_id=film_id)
+    return render_template('films/film_rol_add.html', form=form, film_id=film_id)
 
 
 @app.route('/rol/edit/<int:id>', methods=['GET', 'POST'])
@@ -351,7 +346,7 @@ def rol_edit(id):
         flash('Rol successfully updated!', 'success')
         return redirect(url_for('main.film_detail', id=rol.film_id))
     
-    return render_template('rol_edit.html', form=form, rol=rol)
+    return render_template('films/film_rol_edit.html', form=form, rol=rol)
 
 
 @app.route('/rol/delete/<int:id>', methods=['GET'])
