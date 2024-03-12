@@ -19,8 +19,9 @@
                     Film Actions
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="filmActionsDropdown">
-                    <!-- Edit Film option -->
-                    <li><a class="dropdown-item" href="{{ url_for('film.edit_film', id=film.id) }}">Edit Film</a></li>
+                    <!-- Bewerken Film option -->
+                    <li><a class="dropdown-item" href="{{ url_for('film.edit_film', id=film.id) }}">Bewerken Film</a>
+                    </li>
                     <!-- Delete Film option -->
                     <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal"
                             data-bs-target="#deleteConfirmationModal" data-film-id="{{ film.id }}">Delete Film</a></li>
@@ -104,10 +105,10 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ rol.acteur.voornaam }} {{ rol.acteur.achternaam }}</h5>
                                 <p class="card-text"><strong>Als:</strong> {{ rol.personage }}</p>
-                                <!-- Add Edit and Delete buttons here -->
+                                <!-- Add Bewerken and Delete buttons here -->
                                 <div class="text-end"> <!-- Adjust alignment as needed -->
                                     <a href="{{ url_for('film.rol_edit', id=rol.id) }}"
-                                        class="btn btn-sm btn-secondary">Edit</a>
+                                        class="btn btn-sm btn-secondary">Bewerken</a>
                                     <a href="{{ url_for('film.rol_delete', id=rol.id) }}" class="btn btn-sm btn-danger"
                                         onclick="return confirm('Weet je het zeker?');">Delete</a>
                                 </div>
@@ -146,7 +147,7 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ quote.id }}">
                             <!-- <li><a class="dropdown-item"
-                                    href="{{ url_for('film.film_edit_quote', quote_id=quote.id) }}">Edit</a></li> -->
+                                    href="{{ url_for('film.film_edit_quote', quote_id=quote.id) }}">Bewerken</a></li> -->
                             <li><a class="dropdown-item text-danger"
                                     href="{{ url_for('film.film_delete_quote', quote_id=quote.id) }}"
                                     onclick="return confirm('Are you sure?');">Delete</a></li>
